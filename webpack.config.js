@@ -1,3 +1,6 @@
+// set of rules for what your server has to when it comes time
+//to compile its code from TS to JS and when we're supposed to
+//output it 
 const path = require('path');
 var nodeExternals = require('webpack-node-externals');
 
@@ -29,7 +32,8 @@ const serverConfig = {
     },
     externals: [nodeExternals()]
 };
-
+// this code below will ouput all of your react code,  everything 
+//inside src client will go public(folder) to js folder
 const clientConfig = {
     mode: process.env.NODE_ENV || 'development',
     entry: './src/client/index.tsx',

@@ -86,15 +86,27 @@
 /************************************************************************/
 /******/ ({
 
-/***/ "./src/server/routes.ts":
-/*!******************************!*\
-  !*** ./src/server/routes.ts ***!
-  \******************************/
+/***/ "./src/server/routes/chirps.ts":
+/*!*************************************!*\
+  !*** ./src/server/routes/chirps.ts ***!
+  \*************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\r\nObject.defineProperty(exports, \"__esModule\", { value: true });\r\nvar express = __webpack_require__(/*! express */ \"express\");\r\nvar router = express.Router();\r\nrouter.get('/api/hello', function (req, res, next) {\r\n    res.json('World');\r\n});\r\nexports.default = router;\r\n\n\n//# sourceURL=webpack:///./src/server/routes.ts?");
+eval("\nvar __assign = (this && this.__assign) || function () {\n    __assign = Object.assign || function(t) {\n        for (var s, i = 1, n = arguments.length; i < n; i++) {\n            s = arguments[i];\n            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))\n                t[p] = s[p];\n        }\n        return t;\n    };\n    return __assign.apply(this, arguments);\n};\nObject.defineProperty(exports, \"__esModule\", { value: true });\nvar express_1 = __webpack_require__(/*! express */ \"express\");\nvar chirpsstore_1 = __webpack_require__(/*! ../utils/chirpsstore */ \"./src/server/utils/chirpsstore.js\");\nvar router = express_1.Router();\n//GET /api/chirps\nrouter.get('/', function (req, res) {\n    var data = chirpsstore_1.default.GetChirps();\n    var chirps = Object.keys(data).map(function (key) {\n        return {\n            id: key,\n            username: data[key].username,\n            message: data[key].message\n        };\n    }); //\"object.keys\" returns an array of the keys of an object(the props)\n    chirps.pop();\n    res.json(chirps);\n});\n//GET /api/chirps/:chirpid\nrouter.get('/:chirpid', function (req, res) {\n    var chirpid = req.params.chirpid; // pass as a varible \n    var chirp = chirpsstore_1.default.GetChirp(chirpid); // use chirpid as arg\n    res.json(__assign({ id: chirpid }, chirp));\n});\n//POST /api/chrips\nrouter.post('/', function (req, res) {\n    var chirp = req.body;\n    chirpsstore_1.default.CreateChirp(chirp);\n    res.status(201).json('chirp created');\n});\n//PUT /api/chirps/: chirpid\nrouter.put('/:chirpid', function (req, res) {\n    var chirpid = req.params.chirpid;\n    var chirp = req.body;\n    chirpsstore_1.default.UpdateChirp(chirpid, chirp); //updatwchrip requres two arg: chirpid is what is getting updated and chrips is the new ojbect that is send\n    res.status(200).json(\"Chirp \" + chirpid + \" Updated\");\n});\n//DELETE /api/chirps/:chirpid\nrouter.delete('/:chirpid', function (req, res) {\n    var chirpid = req.params.chirpid;\n    chirpsstore_1.default.DeleteChirp(chirpid);\n    res.status(200).json(\"Chirp \" + chirpid + \" Deleted\");\n});\nexports.default = router;\n\n\n//# sourceURL=webpack:///./src/server/routes/chirps.ts?");
+
+/***/ }),
+
+/***/ "./src/server/routes/index.ts":
+/*!************************************!*\
+  !*** ./src/server/routes/index.ts ***!
+  \************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+eval("\nObject.defineProperty(exports, \"__esModule\", { value: true });\n//import * as express from 'express'; // a way to import this\nvar express_1 = __webpack_require__(/*! express */ \"express\");\nvar chirps_1 = __webpack_require__(/*! ./chirps */ \"./src/server/routes/chirps.ts\");\nvar router = express_1.Router();\nrouter.use('/chirps', chirps_1.default);\nexports.default = router;\n\n\n//# sourceURL=webpack:///./src/server/routes/index.ts?");
 
 /***/ }),
 
@@ -106,7 +118,19 @@ eval("\r\nObject.defineProperty(exports, \"__esModule\", { value: true });\r\nva
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-eval("\r\nObject.defineProperty(exports, \"__esModule\", { value: true });\r\nvar path = __webpack_require__(/*! path */ \"path\");\r\nvar express = __webpack_require__(/*! express */ \"express\");\r\nvar routes_1 = __webpack_require__(/*! ./routes */ \"./src/server/routes.ts\");\r\nvar app = express();\r\nvar p = path.join(__dirname, '../public');\r\nconsole.log(p);\r\napp.use(express.static(p));\r\napp.use(routes_1.default);\r\nvar port = process.env.PORT || 3000;\r\napp.listen(port, function () {\r\n    console.log(\"Server listening on port: \" + port);\r\n});\r\n\n\n//# sourceURL=webpack:///./src/server/server.ts?");
+eval("\nObject.defineProperty(exports, \"__esModule\", { value: true });\nvar express = __webpack_require__(/*! express */ \"express\");\nvar path = __webpack_require__(/*! path */ \"path\");\nvar routes_1 = __webpack_require__(/*! ./routes */ \"./src/server/routes/index.ts\");\nvar app = express();\napp.use(express.static('public'));\napp.use(express.json()); //having the body parse catching  our post rquest that has json data and creats the req body, lead to the post code innchirp.ts\napp.use('/api', routes_1.default);\napp.get('*', function (req, res) {\n    res.sendFile(path.join(__dirname, '../public/index.html')); // tell to send components to the right way\n});\nvar port = process.env.PORT || 3000;\napp.listen(port, function () { return console.log(\"Server listening on port: \" + port); });\n\n\n//# sourceURL=webpack:///./src/server/server.ts?");
+
+/***/ }),
+
+/***/ "./src/server/utils/chirpsstore.js":
+/*!*****************************************!*\
+  !*** ./src/server/utils/chirpsstore.js ***!
+  \*****************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\nconst fs = __webpack_require__(/*! fs */ \"fs\");\nlet chirps = { nextid: 0 };\n\nif(fs.existsSync('chirps.json')) {\n    chirps = JSON.parse(fs.readFileSync('chirps.json'));\n}\n\nlet getChirps = () => {\n    return Object.assign({}, chirps); //create a copy and return it\n}\n\nlet getChirp = id => {\n    return Object.assign({}, chirps[id]); //create a copy and return it\n}\n\nlet createChirp = (chirp) => {\n    chirps[chirps.nextid++] = chirp;\n    writeChirps();\n};\n\nlet updateChirp = (id, chirp) => {\n    chirps[id] = chirp;\n    writeChirps();\n}\n\nlet deleteChirp = id => {\n    delete chirps[id];\n    writeChirps();\n}\n\nlet writeChirps = () => {\n    fs.writeFileSync('chirps.json', JSON.stringify(chirps));\n};\n// use for the other code a conversation\n/* harmony default export */ __webpack_exports__[\"default\"] = ({\n    CreateChirp: createChirp,\n    DeleteChirp: deleteChirp,\n    GetChirps: getChirps,\n    GetChirp: getChirp,\n    UpdateChirp: updateChirp\n});\n\n//# sourceURL=webpack:///./src/server/utils/chirpsstore.js?");
 
 /***/ }),
 
@@ -118,6 +142,17 @@ eval("\r\nObject.defineProperty(exports, \"__esModule\", { value: true });\r\nva
 /***/ (function(module, exports) {
 
 eval("module.exports = require(\"express\");\n\n//# sourceURL=webpack:///external_%22express%22?");
+
+/***/ }),
+
+/***/ "fs":
+/*!*********************!*\
+  !*** external "fs" ***!
+  \*********************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+eval("module.exports = require(\"fs\");\n\n//# sourceURL=webpack:///external_%22fs%22?");
 
 /***/ }),
 

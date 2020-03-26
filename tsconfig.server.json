@@ -1,9 +1,12 @@
+//use to complie to vainlla js
+
 {
     "compilerOptions": {
       "outDir": "./dist/",
       "noImplicitAny": true,
       "module": "commonjs",
       "target": "es5",
+      "allowJs": true, //provide vanilla js code right next to ts code
       "allowSyntheticDefaultImports": true,
       "lib": [
           "es2017"
